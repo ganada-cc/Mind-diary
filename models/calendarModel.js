@@ -1,3 +1,5 @@
+
+
 //캘린더 조회
 async function getSelectedCalendar(pool, selectedCalendarParams) {
   /* 병원일정
@@ -258,7 +260,8 @@ async function selectCalendar(pool, userId, date) {
         AND date = '${date}'
     )
 `;
-const [userRow] = await pool.promise().query(selectCalendarQuery, userId);
+
+const [userRow] = await pool.query(selectCalendarQuery, [userId]);
 return userRow;
 }
 
