@@ -1,5 +1,5 @@
 async function insertMediReminder(pool, user_id, medi_reminder_time) {
-    const connection = await pool.promise().getConnection();
+    const connection = await pool.getConnection();
     if (Array.isArray(medi_reminder_time)) {
       // deleteMediReminderQuery는 배열입니다
       // 여기에서 필요한 작업을 수행하세요
@@ -75,8 +75,8 @@ async function insertMediReminder(pool, user_id, medi_reminder_time) {
           medi_reminder_time
         ];
         try{
-        await pool.promise().query(deleteMediReminderQuery, user_id);
-        await pool.promise().query(insertMediReminderQuery, mediReminderParams);
+        await pool.query(deleteMediReminderQuery, user_id);
+        await pool.query(insertMediReminderQuery, mediReminderParams);
       }catch(err){
         console.log(err);
         throw err;
@@ -100,7 +100,7 @@ async function deleteMedi(pool, user_id) {
   const deleteMediQuery = `
   DELETE FROM medication_reminder WHERE user_id = ?; 
   `;
-  const [mediRows] = await pool.promise().query(deleteMediQuery, user_id);
+  const [mediRows] = await pool.query(deleteMediQuery, user_id);
   return mediRows;
 }
 // 복용약 알림 get
@@ -108,7 +108,7 @@ async function selectMedi(pool, user_id) {
     const selectMediQuery = `
         select medi_reminder_time from medication_reminder where user_id = ?;
     `;
-    const [mediRows] = await pool.promise().query(selectMediQuery, user_id);
+    const [mediRows] = await pool.query(selectMediQuery, user_id);
     return mediRows;
 }
 
@@ -117,7 +117,7 @@ async function selectretrievePhoneNum(pool, user_id) {
     const selectretrievePhoneNumQuery = `
         select gd_phone from user where user_id = ?;
     `;
-    const [phoneNumQueryRows] = await pool.promise().query(selectretrievePhoneNumQuery, user_id);
+    const [phoneNumQueryRows] = await pool.query(selectretrievePhoneNumQuery, user_id);
     return phoneNumQueryRows;
 }
 
@@ -130,7 +130,7 @@ async function selectSMSInfo(pool) {
 	  INNER JOIN patient ON medication_reminder.user_id = patient.user_id
     ;
     `;
-    const [phoneSMSQueryRows] = await pool.promise().query(selectSMSQuery);
+    const [phoneSMSQueryRows] = await pool.query(selectSMSQuery);
     return phoneSMSQueryRows;
 }
 
@@ -140,7 +140,7 @@ async function selectHospital(pool, user_id) {
     const selectHospitalQuery = `
         select medi_reminder_time from medication_reminder where user_id = ?;
     `;
-    const [mediRows] = await pool.promise().query(selectHospitalQuery, user_id);
+    const [mediRows] = await pool.query(selectHospitalQuery, user_id);
     return mediRows;
 }
 */

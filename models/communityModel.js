@@ -4,7 +4,7 @@ async function selectCommunity(pool, boardId, title) {
         FROM board
         WHERE board_id = ?`;
         
-    const [boardRows] = await pool.promise().query(selectBoardQuery, boardId, title);
+    const [boardRows] = await pool.query(selectBoardQuery, boardId, title);
     
     const list = boardRows.length > 0 ? boardRows.map(row => ({
       category_name : row.category_name, 
@@ -24,7 +24,7 @@ async function selectMyPost(pool, user_id) {
     FROM board
     WHERE user_id = ?
   `
-  const [userPostingRow] = await pool.promise().query(selectMyPostQuery, user_id);
+  const [userPostingRow] = await pool.query(selectMyPostQuery, user_id);
   const list = userPostingRow.length > 0 ? userPostingRow.map(row => ({
     board_id : row.board_id,
     title : row.title
@@ -37,7 +37,7 @@ async function selectOtherPost(pool, user_id, boardId, title) {
     FROM board
     WHERE user_id != ?
   `;
-  const [communityPosts] = await pool.promise().query(selectCommunityQuery,user_id, boardId, title);
+  const [communityPosts] = await pool.query(selectCommunityQuery,user_id, boardId, title);
   const list = communityPosts.length > 0 ? communityPosts.map(row => ({
     board_id : row.board_id,
     title : row.title
@@ -51,7 +51,7 @@ async function selectComment(pool, boardId, title) {
   FROM reply
   WHERE board_id = ?`;
       
-  const [commentRows] = await pool.promise().query(selectCommentQuery, boardId, title);
+  const [commentRows] = await pool.query(selectCommentQuery, boardId, title);
   
   const list = commentRows.length > 0 ? commentRows.map(row => ({
     category_name : row.category_name, 
@@ -73,7 +73,7 @@ async function incrementViewsCount(pool, boardId) {
       SET views = views + 1
       WHERE board_id = ?`;
 
-      const [viewRows] = await pool.promise().query(updateViewsCountQuery, boardId);
+      const [viewRows] = await pool.query(updateViewsCountQuery, boardId);
       return viewRows;
 }
 
@@ -95,7 +95,7 @@ async function getWorryList(pool, user_id, page) {
   
   ;
 
-  const [listRows] = await pool.promise().query(getListQuery);
+  const [listRows] = await pool.query(getListQuery);
 
   const list = listRows.length > 0 ? listRows.map(row => ({
      board_id : row.board_id,
@@ -126,7 +126,7 @@ LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset};`
 
 ;
 
-const [listRows] = await pool.promise().query(getListQuery, user_id);
+const [listRows] = await pool.query(getListQuery, user_id);
 
 const list = listRows.length > 0 ? listRows.map(row => ({
    board_id : row.board_id,
@@ -166,7 +166,7 @@ async function insertBoardInfo(pool, insertBoardParams){
     `;
     
     
-  const connection = await pool.promise().getConnection();
+  const connection = await pool.getConnection();
   
   try {
       await connection.query(insertBoardQuery, insertBoardParams);
@@ -186,7 +186,7 @@ const insertCommentQuery = `
 `;
 
 
-const connection = await pool.promise().getConnection();
+const connection = await pool.getConnection();
 
 try {
 //await connection.query(baseCommentQuery, baseCommentParams);
@@ -218,7 +218,7 @@ async function getInfoList(pool, user_id, page) {
     
     ;
 
-    const [listRows] = await pool.promise().query(getListQuery);
+    const [listRows] = await pool.query(getListQuery);
 
     const list = listRows.length > 0 ? listRows.map(row => ({
        board_id : row.board_id,
@@ -249,7 +249,7 @@ async function getMyInfoList(pool, user_id, page) {
   
   ;
 
-  const [listRows] = await pool.promise().query(getListQuery, user_id);
+  const [listRows] = await pool.query(getListQuery, user_id);
 
   const list = listRows.length > 0 ? listRows.map(row => ({
      board_id : row.board_id,
@@ -292,7 +292,7 @@ async function insertBoardInfo(pool, insertBoardParams){
       `;
       
       
-    const connection = await pool.promise().getConnection();
+    const connection = await pool.getConnection();
     
     try {
         await connection.query(insertBoardQuery, insertBoardParams);
@@ -312,7 +312,7 @@ async function insertCommentInfo(pool, insertCommentParams){
   `;
   
   
-const connection = await pool.promise().getConnection();
+const connection = await pool.getConnection();
 
   try {
   //await connection.query(baseCommentQuery, baseCommentParams);

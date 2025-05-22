@@ -14,7 +14,7 @@ async function getSelectedDiary(pool, selectedDiaryParams) {
     ORDER BY date ASC;
   `;
   
-    const [DiarycalendarRows] = await pool.promise().query(getDiaryQuery, selectedDiaryParams);
+    const [DiarycalendarRows] = await pool.query(getDiaryQuery, selectedDiaryParams);
     function formatDate(dateString) {
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -76,7 +76,7 @@ async function getSymptomCsv(pool, symptomCsvParams) {
   ORDER BY s.symptom_name, c.date ASC;
     `;
 
-  const getSymptomCsvResponse = await pool.promise().query(getSymptomCsvQuery, symptomCsvParams);
+  const getSymptomCsvResponse = await pool.query(getSymptomCsvQuery, symptomCsvParams);
   return getSymptomCsvResponse;
 }
 
@@ -114,7 +114,7 @@ async function getEntireSymptomCsv(pool, entireSymptomCsvParams) {
 
     `;
 
-  const getEntireSymptomCsvResponse = await pool.promise().query(getEntireSymptomCsvQuery, entireSymptomCsvParams);
+  const getEntireSymptomCsvResponse = await pool.query(getEntireSymptomCsvQuery, entireSymptomCsvParams);
   return getEntireSymptomCsvResponse;
 }
 
