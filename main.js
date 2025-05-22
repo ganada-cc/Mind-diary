@@ -1,6 +1,6 @@
 //connect database
 require('dotenv').config({path: "./config/database.env"});
-const mysql = require ('mysql2');
+const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -16,7 +16,7 @@ module.exports = pool;  //모듈로 내보내기
 
 // 스케줄링을 위한 패키지 추가
 const schedule = require('node-schedule');
-require('dotenv').config({path: "./config/sens.env"}); // sens.env 불러오기
+// require('dotenv').config({path: "./config/sens.env"}); // sens.env 불러오기
 
 require('dotenv').config({path: "./config/gpt.env"}); // gpt.env 불러오기
 
@@ -56,14 +56,14 @@ app.use('/export', exportRouter);
 reminderController = require('./controllers/reminderController');
 
 //주기적인 작업 스케줄링
-schedule.scheduleJob('* * * * *', function() { //1분
-    reminderController.sendSMS();
-  });
+// schedule.scheduleJob('* * * * *', function() { //1분
+//     reminderController.sendSMS();
+//   });
   
 // root - 로그인
 app.get(
     "/", (req,res) =>
-    {res.render("users/login.ejs");}
+    {res.render("users/login");}
 );
 
 
@@ -77,6 +77,30 @@ app.listen(port,() => {
   }
 );
 
+
+async function testConnection() {
+  try {
+    const connection = await mysql.createConnection({
+      host: 'cc-db.c32segwywmue.ap-northeast-2.rds.amazonaws.com',
+      user: 'admin',
+      password: 'admin12345',
+      port: 3306,
+      database: 'cc_db',
+    });
+
+    console.log('✅ DB 연결 성공!');
+
+    // 테스트 쿼리 (예: SHOW TABLES)
+    const [rows] = await connection.query('SHOW TABLES');
+    console.log('📦 현재 테이블 목록:', rows);
+
+    await connection.end();
+  } catch (error) {
+    console.error('❌ DB 연결 실패:', error.message);
+  }
+}
+
+testConnection();
 
 // const spawn = require('child_process').spawn;
 
