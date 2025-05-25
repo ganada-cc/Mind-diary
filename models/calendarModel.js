@@ -65,11 +65,11 @@ async function getSelectedCalendar(pool, selectedCalendarParams) {
   */
 
   //체크 사항
-  const [checkRows] = await pool.promise().query(getCheck_listQuery, selectedCalendarParams);
+  const [checkRows] = await pool.query(getCheck_listQuery, selectedCalendarParams);
   const check_list  = checkRows.length > 0 ? checkRows.map(row => ({ content: row.check_content, is_check: row.is_check })) : [];
 
   //잔 시간 //관찰 일기
-  const [calendarRows] = await pool.promise().query(getCalendarQuery, selectedCalendarParams);
+  const [calendarRows] = await pool.query(getCalendarQuery, selectedCalendarParams);
   const calendar =  {
     sleep_time: "",
     diary: ""
@@ -82,7 +82,7 @@ async function getSelectedCalendar(pool, selectedCalendarParams) {
   }
 
   //증상
-  const [symptomRows] = await pool.promise().query(getSymptomQuery, selectedCalendarParams);
+  const [symptomRows] = await pool.query(getSymptomQuery, selectedCalendarParams);
 
   const symptom_list = symptomRows.length > 0 ? symptomRows.map(row => ({ symptom_name: row.symptom_name, degree: row.degree})) : [];
   return {check_list, calendar, symptom_list}; //hospital_schedule 제외
@@ -148,7 +148,7 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
     // }catch(err){
     //   console.log(err);
     // }
-  const connection = await pool.promise().getConnection();
+  const connection = await pool.getConnection();
   
   // console.log("why");
   try {
@@ -270,7 +270,7 @@ async function insertFileMem(pool, insertFileMemParams) {
   try{
     //console.log(typeof(insertFileMemParams[0]));
   //const server_name = parseInt(insertFileMemParams[0]);
-  const connection = await pool.promise().getConnection();
+  const connection = await pool.getConnection();
   //console.log("number "+ typeof(server_name));
   const getCalendarIdQuery = `
     SELECT calendar_id FROM calendar WHERE  user_id = '${insertFileMemParams[0]}' AND \`date\` = '${insertFileMemParams[1]}' ;
@@ -325,7 +325,7 @@ async function getSelectedMindDiary(pool, selectedMindDiaryParams) {
     );
   `;
 
-  const [mindDiaryRows] = await pool.promise().query(getMindDiary_listQuery, selectedMindDiaryParams);
+  const [mindDiaryRows] = await pool.query(getMindDiary_listQuery, selectedMindDiaryParams);
   
   const MindDiary_list = {
     keyword: "",
@@ -358,8 +358,8 @@ async function insertMindDiaryInfo(pool, insertMindDiaryParams) {
         `;
 
   try {
-    await pool.promise().query(deleteMindDiaryQuery);
-    await pool.promise().query(insertMindDiaryQuery, insertMindDiaryParams);
+    await pool.query(deleteMindDiaryQuery);
+    await pool.query(insertMindDiaryQuery, insertMindDiaryParams);
   } catch (err) {
     throw err;
   }

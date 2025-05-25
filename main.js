@@ -30,9 +30,7 @@ const port = 3000,
     calendarRouter = require('./routes/calendarRoute'),
     usersRouter = require('./routes/usersRoute'),
     reminderRouter = require('./routes/reminderRoute'),
-    communityRouter = require('./routes/communityRoute'),
     sanitizeHtml = require('sanitize-html'),
-    exportRouter = require('./routes/exportRoute'),
     puppeteer = require('puppeteer');
 
 const cookieParser = require('cookie-parser');
@@ -50,8 +48,6 @@ app.use(cookieParser());
 app.use('/calendar', calendarRouter);
 app.use('/users', usersRouter);
 app.use('/reminder', reminderRouter);
-app.use('/community', communityRouter)
-app.use('/export', exportRouter);
 
 reminderController = require('./controllers/reminderController');
 

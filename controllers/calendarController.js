@@ -71,12 +71,8 @@ exports.postCalendar = async function (req, res) {
         return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
       }
       const {
-        hospital_name,
-        hospital_schedule,
         check_content,
         sleep_time,
-        //symptom_text,
-        //symptom_time,
         symptom_range,
         diary_text,
         is_check
@@ -85,8 +81,6 @@ exports.postCalendar = async function (req, res) {
     const createCalResponse = await calendarService.createCalendar(
         user_id,
         date,
-        //hospital_name,
-        //hospital_schedule,
         check_content,
         sleep_time,
         symptom_range,
