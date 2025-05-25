@@ -54,65 +54,6 @@ exports.getCalendar = async function (req, res) {
   }
 }
 
-
-exports.postCalendar = async function (req, res) {
-  const token = req.cookies.x_auth;
-  if (token) {
-      const decodedToken = jwt.verify(token, secret.jwtsecret); // 토큰 검증, 복호화
-      const user_id = decodedToken.user_id; // user_id를 추출
-      console.log(req.body);
-      const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
-      console.log(date);
-      //validation
-      if(!user_id) {
-        return res.send(errResponse(baseResponse.USER_USERIDX_EMPTY));
-      } 
-      if (user_id <= 0) {
-        return res.send(errResponse(baseResponse.USER_USERIDX_LENGTH));
-      }
-      const {
-        check_content,
-        sleep_time,
-        symptom_range,
-        diary_text,
-        is_check
-    } = req.body;
-
-    const createCalResponse = await calendarService.createCalendar(
-        user_id,
-        date,
-        check_content,
-        sleep_time,
-        symptom_range,
-        diary_text,
-        is_check
-    );
-    console.log(diary_text);
-    if (createCalResponse == "성공") {
-      const queryString = querystring.stringify(req.query);
-      return res.status(200).send(`
-        <script>
-          if (confirm('캘린더 등록에 성공했습니다.')) {
-            window.location.href = "/calendar?${queryString}";
-          }
-        </script>
-      `);
-    } else {
-      const queryString = querystring.stringify(req.query);
-      return res.send(`
-        <script>
-          if (confirm('캘린더 등록에 실패했습니다.')) {
-            window.location.href = "/calendar?${queryString}";
-          }
-        </script>
-      `);
-    }
-  }
-  else {
-    return res.redirect('/');
-  }
-};
-
 exports.postFile = async function (req, res) {  
   const token = req.cookies.x_auth; 
   if (token) {
@@ -155,9 +96,6 @@ exports.postFile = async function (req, res) {
         </script>
       `); 
     }
-
-
-
     if (!req.file) {
       return res.send(`
         <script>
@@ -172,8 +110,6 @@ exports.postFile = async function (req, res) {
       return res.redirect(newURL);
     }
     else res.send(attachFileResponse);
-    //return res.redirect('/calendar');
-    //res.send(attachFileResponse);
   
   }
   else {

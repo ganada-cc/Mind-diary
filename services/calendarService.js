@@ -1,4 +1,3 @@
-const { response } = require('express');
 const pool = require('../main');
 const calendarModel = require('../models/calendarModel');
 
@@ -30,57 +29,6 @@ exports.retrieveSelectedMindDiary = async function (user_id, date) {
   }
   
 }
-exports.createCalendar = async function (
-  user_id,
-  date,
-  //hospital_name,
-  //hospital_schedule,
-  check_content,
-  sleep_time,
-  symptom_range,
-  diary_text,
-  is_check
-) {
-try {
-
-  const deleteCalendarParams = [
-      user_id,
-      date
-    ];
- 
-  const insertCalendarParams = [
-    user_id,
-    date,
-    sleep_time,
-    diary_text,
-  ];
-  if (insertCalendarParams[2] == undefined ||insertCalendarParams[2] == ''){
-    insertCalendarParams[2] = null;
-  }
-  const getCalendarIdParams = [
-      user_id,
-      date
-    ];
-
-  const deleteHospital_scheduleParams = [
-      user_id
-    ];
-
-  /*
-  const insertHospital_scheduleParams = [
-      user_id,
-      hospital_name,
-      hospital_schedule,      
-  ];
-  */
-  await calendarModel.insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, getCalendarIdParams, user_id, check_content, is_check,  symptom_range); //insertHospital_scheduleParams 제외
-  console.log("service");
-  
-  return '성공';
-  } catch (err) {
-      return err;
-  }
-};
 
 
 exports.createFileMem = async function ( user_id, date, server_name, user_name, extension) {
@@ -113,7 +61,6 @@ exports.createMindDiary = async function (
         solution,
         compliment
       ];
-      // console.log(insertMindDiaryParams)
       const mindDiaryResult = await calendarModel.insertMindDiaryInfo(pool, insertMindDiaryParams);
       return "성공"
     } catch (err) {

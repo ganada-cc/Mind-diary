@@ -2,19 +2,7 @@
 
 //캘린더 조회
 async function getSelectedCalendar(pool, selectedCalendarParams) {
-  /* 병원일정
-  const getHospital_scheduleQuery = `
-    SELECT hospital_name, TIME(booking_time) AS booking_hour
-    FROM hospital_schedule
-    WHERE user_id = ?
-    AND calendar_id = (
-      SELECT calendar_id
-      FROM calendar
-      WHERE user_id = ?
-      AND date = ?
-    );
-  `;
-  */
+
   /*체크사항*/
   const getCheck_listQuery = `
     SELECT check_content, is_check
@@ -52,17 +40,6 @@ async function getSelectedCalendar(pool, selectedCalendarParams) {
     )
     AND symptom_name IN ('기억장애', '언어장애', '배회', '계산능력 저하', '성격 및 감정의 변화', '이상행동');
   `;
-  /*
-  //병원 이름
-  const [hosRows] = await pool.promise().query(getHospital_scheduleQuery, selectedCalendarParams);
-    hospital_name: "",
-    booking_hour: ""
-  };
-  if (hosRows.length > 0) {
-    hospital_schedule.hospital_name = hosRows[0].hospital_name;
-    hospital_schedule.booking_hour = hosRows[0].booking_hour;
-  }
-  */
 
   //체크 사항
   const [checkRows] = await pool.query(getCheck_listQuery, selectedCalendarParams);
@@ -109,16 +86,7 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
     const getCalendarIdQuery = `
     SELECT calendar_id FROM calendar WHERE  user_id = ? AND \`date\` = ?;
     `;
-    // console.log("model2");
-    /*
-    //3. 병원일정 insert
-    const deleteHospital_scheduleQuery = `
-    DELETE FROM hospital_schedule WHERE calendar_id = ? AND user_id = ?; 
-    `;
-    const insertHospital_scheduleQuery = `
-    INSERT INTO hospital_schedule (calendar_id, user_id, hospital_name, booking_time) VALUES (?, ?, ?, ?);
-    `;
-    */
+    
     //4. map 이용해 캘린더에서 checkContent 길이만큼 쿼리 생성(delete)
     const deleteCheck_listQueries = check_content.map(() => `
     DELETE FROM check_list WHERE calendar_id = ? AND user_id = ? AND check_content = ?;
@@ -143,30 +111,16 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
       INSERT INTO symptom (calendar_id, user_id, symptom_name,  degree) VALUES (?, ?, ?, ?);
       `;
     });
-    
-    
-    // }catch(err){
-    //   console.log(err);
-    // }
+ 
   const connection = await pool.getConnection();
   
-  // console.log("why");
   try {
       await connection.query('START TRANSACTION');
       await connection.query(deleteCalendarQuery, deleteCalendarParams);
       await connection.query(insertCalendarQuery, insertCalendarParams);
       const [calendarIDRow] =  await connection.query(getCalendarIdQuery, getCalendarIdParams);
       calendar_id = calendarIDRow[0].calendar_id;
-      // console.log("calId: "+calendar_id);
-      //가져온 calendar id로 params 수정
-      /*
-      deleteHospital_scheduleParams.unshift(calendar_id);
-      insertHospital_scheduleParams.unshift(calendar_id);
       
-
-      await connection.query(deleteHospital_scheduleQuery, deleteHospital_scheduleParams);
-      await connection.query(insertHospital_scheduleQuery, insertHospital_scheduleParams);
-      */
       //가져온 calendar id로 params 동적으로 checkcontents 파라미터 만듦(delete)
       const deleteCheck_listParams = check_content.flatMap((checkContent, index) => [
       calendar_id,
@@ -180,8 +134,6 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
       checkContent,
       is_check[index]
       ]);
-      // console.log(insertCheck_listParams);
-    
 
       for (let i = 0; i < deleteCheck_listQueries.length; i++) {
         await connection.query(deleteCheck_listQueries[i], deleteCheck_listParams.slice(i * 3, (i + 1) * 3));
@@ -190,9 +142,6 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
       for (let i = 0; i < insertCheck_listQueries.length; i++) {
         await connection.query(insertCheck_listQueries[i], insertCheck_listParams.slice(i * 4, (i + 1) * 4));
       }
-      
-      //await Promise.all(deleteCheck_listQueries.map((query, index) => connection.query(query, deleteCheck_listParams.slice(index * 3, (index + 1) * 3))));
-      //await Promise.all(insertCheck_listQueries.map((query, index) => connection.query(query, insertCheck_listParams.slice(index * 4, (index + 1) * 4))));
 
       //가져온 calendar id로 params 동적으로 Symptoms 파라미터 만듦(delete)
       const deleteSymptomParams = symptom_text.flatMap(() => [
@@ -208,36 +157,19 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
         symptom_range[index]
       ];
     });
-    // console.log(deleteSymptomParams);
-    // console.log("test",insertSymptomParams);
+
     for (let i = 0; i < deleteSymptomQueries.length; i++) {
       const query = deleteSymptomQueries[i];
       if (query !== null) {
         await connection.query(query, deleteSymptomParams);
       }
     }
-    
-    // await Promise.all(deleteSymptomQueries.map((query, index) => {
-    //   if (query==null)
-    //     return;
-    //   else return connection.query(query, deleteSymptomParams.slice(index * 3, (index + 1) * 3));
-    //   }));
-    // console.log("delete완료");
-
     for (let i = 0; i < insertSymptomQueries.length; i++) {
       const query = insertSymptomQueries[i];
       if (query !== null) {
         await connection.query(query, insertSymptomParams.slice(i * 4, (i + 1) * 4));
       }
     }
-    
-    // await Promise.all(insertSymptomQueries.map((query, index) => {
-    //     if (query==null)
-    //       return;
-    //     else return connection.query(query, insertSymptomParams.slice(index * 5, (index + 1) * 5));
-    //     }));
-      // console.log("model");
-
     await connection.query('COMMIT');
   } catch (error) {
       await connection.query('ROLLBACK');
@@ -268,10 +200,8 @@ return userRow;
 // 파일 업로드
 async function insertFileMem(pool, insertFileMemParams) {
   try{
-    //console.log(typeof(insertFileMemParams[0]));
-  //const server_name = parseInt(insertFileMemParams[0]);
   const connection = await pool.getConnection();
-  //console.log("number "+ typeof(server_name));
+
   const getCalendarIdQuery = `
     SELECT calendar_id FROM calendar WHERE  user_id = '${insertFileMemParams[0]}' AND \`date\` = '${insertFileMemParams[1]}' ;
     `;
