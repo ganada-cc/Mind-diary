@@ -23,110 +23,64 @@
           
     <h3></h3>
     <form class="user" action= "/users/signup" method="POST">
-            <!-- <form class="user" method="POST"> -->
-              <div class="cc">
-              <div class="c1">
-              <div id="logintext">Sign Up</div>
-                    <div class="form-group">
-                        <div class="logininfo">
-                            * 아이디
-                        </div>
-                        <input type="text" class="form-control form-control-user"
-                            id="username" name="user_id" aria-describedby="emailHelp"
-                            placeholder="cheese" required>
-                        </div>
-                        <div class="form-group">
-                            <div class="logininfo">
-                                * 비밀번호
-                            </div>
-                            <input type="password" class="form-control form-control-user"
-                                id="password" name="password" placeholder="Password" required>
-                        </div>
-                        <!-- <div class="form-group">
-                          <div class="logininfo">
-                              비밀번호 확인
-                          </div>
-                          <input type="password" class="form-control form-control-user"
-                              id="password" name="password" placeholder="Password">
-                      </div> -->
-                  <div class="form-group">
-                    <div class="logininfo">
-                        * 보호자 전화번호
-                    </div>
-                    <input type="text" class="form-control form-control-user"
-                        id="password" name="gd_phone" placeholder="010-1234-5678" required>
-                </div>
-                <div class="form-group">
-                  <div class="logininfo">
-                      * 환자와의 관계
-                  </div>
-                  <div class="dropdown">
-                      <select class="box" name="relationship" id="domain-list">
-                        <option value="자녀">자녀</option>
-                        <option value="손주">손주</option>
-                        <option value="며느리">며느리</option>
-                        <option value="사위">사위</option>
-                        <option value="배우자">배우자</option>
-                        <option value="형제자매">형제자매</option>
-                        <option value="전문가">전문가</option>
-                        <option value="부모">부모</option>
-                        <option value="친구">친구</option>
-                        <option value="이웃">이웃</option>
-                        <option value="기타">기타</option>
-                      </select> </div>
-              
-              <script>
-                $(document).ready(function () {
-                    $('#domain-list').change(function () {
-                        var selectedValue = $('#domain-list').val();
-                        $('#relationship').val(selectedValue);
-                    });
-                });
-              </script>
-              
-              <div class="form-group">
-                <div class="logininfo">
-                    * 회원 이름
-                </div>
-                <input type="text" class="form-control form-control-user"
-                    id="password" name="user_name" placeholder="홍길동" required>
-            </div></div>
-            <div class="c2">
-            <div class="form-group">
-              <div class="logininfo">
-                  * 환자 이름
-              </div>
-              <input type="text" class="form-control form-control-user"
-                  id="password" name="patient_name" placeholder="신사임당" required>
-          </div>            
-          <!-- <div class="form-group">
-            <div class="logininfo">
-                * 환자 생년월일
-            </div>
-            <input type="date" class="form-control form-control-user"
-                id="password" name="birth_date" placeholder="YYYY-MM-DD" required>
-        </div> -->
-        <!-- <div class="form-group">
-          <div class="logininfo">
-             * 환자 성별
-          </div>
-          <input type="text" class="form-control form-control-user"
-              id="password" name="gender" placeholder="여" required>
-          </div> -->
-      <div class="form-group">
-        <div class="logininfo">
-          환자 치매 등급
+        <!-- USER INFO -->
+        <div class="form-group">
+            <div class="logininfo">* 아이디</div>
+            <input type="text" name="user_id" required>
         </div>
-        <input type="text" class="form-control form-control-user"
-            id="password" name="dementia_grade" placeholder="3등급">
-      </div>
-      <div class="form-group">
-        <div class="logininfo">
-          환자 전화번호
+
+        <div class="form-group">
+            <div class="logininfo">* 비밀번호</div>
+            <input type="password" name="password" required>
         </div>
-        <input type="text" class="form-control form-control-user"
-            id="password" name="patient_phone" placeholder="010-1234-5678">
-      </div>
+
+        <div class="form-group">
+            <div class="logininfo">* 보호자 이름</div>
+            <input type="text" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">* 보호자 전화번호</div>
+            <input type="text" name="phone_number" required>
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">* 환자와의 관계</div>
+            <select name="relationship" required>
+            <option value="자녀">자녀</option>
+            <option value="배우자">배우자</option>
+            <option value="기타">기타</option>
+            </select>
+        </div>
+
+        <!-- PATIENT INFO -->
+        <div class="form-group">
+            <div class="logininfo">* 환자 이름</div>
+            <input type="text" name="patient_name" required>
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">* 환자 생년월일</div>
+            <input type="date" name="birth_date" required>
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">* 환자 성별</div>
+            <select name="sex" required>
+            <option value="남">남</option>
+            <option value="여">여</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">치매 등록번호</div>
+            <input type="text" name="dementia_registration">
+        </div>
+
+        <div class="form-group">
+            <div class="logininfo">복용 약</div>
+            <input type="text" name="medication">
+        </div>
 <div class="term_of_service">
     ⦿ 이용약관
   </div>

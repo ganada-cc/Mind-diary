@@ -6,28 +6,26 @@ exports.postUsers = async function (req,res) {
     const {
         user_id,
         password,
-        gd_phone,
+        name,
+        phone_number,
         relationship,
         patient_name,
-        user_name,
         birth_date,
-        gender,
-        dementia_grade,
-        medicine,
-        address
+        sex,
+        dementia_registration,
+        medication
     } = req.body;
     const signUpResponse = await usersService.createUser(
         user_id,
         password,
-        gd_phone,
+        name,
+        phone_number,
         relationship,
         patient_name,
-        user_name,
         birth_date,
-        gender,
-        dementia_grade,
-        medicine,
-        address
+        sex,
+        dementia_registration,
+        medication
       );
       if (signUpResponse == "성공") {
         return res.status(200).send(`
@@ -44,6 +42,7 @@ exports.postUsers = async function (req,res) {
           if (confirm('회원가입에 실패했습니다. 회원가입 정보를 다시 한 번 확인해주세요.')) {
             window.location.href = "/users/signup";
           }
+
         </script>
       `);
       }
@@ -63,7 +62,7 @@ exports.login = async function (req, res) {
                   maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
                   httpOnly: true,
                 })
-                .render('users/login.ejs', { signInResponse: signInResponse, loginState : '성공'});
+                .render('users/login', { signInResponse: signInResponse, loginState : '성공'});
   }
   else {
     return res.send(`
