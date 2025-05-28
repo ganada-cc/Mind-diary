@@ -9,7 +9,7 @@
   
 </section>
 <div class="jb-division-line"></div>
-<section id="hero2" class="d-flex align-items-center">
+<section id="hero2" class="d-flex" style="align-items: flex-start;">
   <main id="about">
     <div class="col-lg-5 pt-lg-0 order-2 order-lg-1 justify-content-center">
       <div class="wrapper">
@@ -83,8 +83,12 @@
       
       <div class="wrapper ininin">
         <form action="/calendar/upload" method="POST" enctype="multipart/form-data" id="fileForm">
-          <input id="inputbox" style="padding: 23px 25px; display: flex; justify-content: center;" type="file" name="file">
+          <div id="preview-container" style="text-align:center; margin-top: 10px;">
+            <img id="preview-image" src="#" alt="pre-image" style="max-width: 300px; display: none;" />
+          </div>
+          <input id="inputbox" style="padding: 23px 25px; display: flex; justify-content: center;" type="file" name="file" accept="image/*" onchange="previewImage(event)">
           <input id="fileDate" type="hidden" name="fileDate" value="">
+
           <button id="inputbutton" type="submit" style="margin:auto; width: 70pt; height: 30pt; font-size: 12px; background-color: #b3cc62; margin-bottom: 10px;">업로드</button>
         </form>        
       </div>
@@ -172,6 +176,29 @@
 
   </div>
     
+  <script>
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById('preview-image');
+  
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+      }
+    }
+  
+    document.getElementById('fileForm').addEventListener('submit', () => {
+      document.getElementById('preview-image').style.display = 'none';
+    });
+  </script>
+  
     
   </main>
   <script>

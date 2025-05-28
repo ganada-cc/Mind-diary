@@ -2,4 +2,10 @@ config/sens.env
 config/ret.js
 config/database.env
 config/gpt.env
+config/aws.env
+config/s3.js
+node_modules/
 cheeseenv/
+# 로그 파일/ macOS 전용 trash
+*.log
+.DS_Store

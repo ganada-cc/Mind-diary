@@ -1,5 +1,7 @@
 //connect database
 require('dotenv').config({path: "./config/database.env"});
+require('dotenv').config({path: "./config/aws.env"});
+
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -49,8 +51,6 @@ app.get(
     "/", (req,res) =>
     {res.render("users/login");}
 );
-
-
 
 app.listen(port,() => {
   const dir = "./uploads";

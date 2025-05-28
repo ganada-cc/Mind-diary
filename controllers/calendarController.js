@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const secret = require('../config/secret');
 const querystring = require('querystring');
 const baseResponse = require("../config/baseResponseStatus");
+// s3 연결 관련
+const s3 = require('../config/s3');
+const { v4: uuidv4 } = require('uuid');
 
 //캘린더 조회
 exports.getCalendar = async function (req, res) {
@@ -54,67 +57,48 @@ exports.getCalendar = async function (req, res) {
   }
 }
 
-exports.postFile = async function (req, res) {  
-  const token = req.cookies.x_auth; 
-  if (token) {
-    const decodedToken = jwt.verify(token, secret.jwtsecret); // 토큰 검증, 복호화
-    const user_id = decodedToken.user_id; // user_id를 추출
+exports.postFile = async function (req, res) {
+  const token = req.cookies.x_auth;
+  if (!token) return res.redirect('/');
+
+  const decodedToken = jwt.verify(token, secret.jwtsecret);
+  const user_id = decodedToken.user_id;
+  const date = req.body.fileDate;
+  const file = req.file;
+
+  if (!file) {
+    return res.send(`<script>alert("파일이 없습니다."); window.location.href = "/calendar";</script>`);
+  }
+
+  const extension = path.extname(file.originalname).toLowerCase();
+  const allowedExt = ['.png', '.jpg', '.jpeg'];
+  if (!allowedExt.includes(extension)) {
+    return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/calendar";</script>`);
+  }
+
+  const server_name = uuidv4();
+  const user_name = path.basename(file.originalname, extension);
+  const fileKey = `images/${server_name}${extension}`;
+
+  const params = {
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
+    Key: fileKey,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
+
+  try {
+    const uploadResult = await s3.upload(params).promise();
+    console.log("S3 업로드 성공:", uploadResult); 
     
-    const date = req.body.fileDate;
-    console.log("date: "+req.body.fileDate);
-
-  
-    const server_name = path.basename(req.file.filename, path.extname(req.file.originalname)); //서버증상
-      const user_name = path.basename(req.file.originalname, path.extname(req.file.originalname));
-      const extension = path.extname(req.file.filename);
-      console.log(server_name + user_name + extension);
-
-    var attachFileResponse;
-
-    //const queryString = querystring.stringify(req.query);
-    const selectedYear = String(date).slice(0, 4); // 처음 4글자는 년도
-    const selectedMonth =  String(date).slice(4, 6); // 다음 2글자는 월
-    const selectedDate =  String(date).slice(6, 9); // 다음 2글자는 일
-    const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}&selectedDate=${selectedDate}`;     
-      
-    // 사진 확장자인 경우에만 처리
-    if (['.png', '.jpg', '.jpeg', '.tiff', '.tif','.gif', '.webp', '.heif', '.heic'].includes(extension.toLowerCase())) {
-      attachFileResponse = await calendarService.createFileMem(
-        user_id,
-        date,
-        server_name,
-        user_name,
-        extension
-      );
-    }
-    else{
-      return res.send(`
-        <script>
-          if (confirm('png, jpg, jpeg, tif, tiff, gif, webp, heif, heic의 사진 확장자인 파일만 업로드할 수 있습니다. 확인을 누르면 메인 페이지로 돌아갑니다.')) {
-            window.location.href = "/calendar"; 
-          }
-        </script>
-      `); 
-    }
-    if (!req.file) {
-      return res.send(`
-        <script>
-          if (confirm('파일이 없습니다. 확인을 누르면 메인 페이지로 돌아갑니다.')) {
-            window.location.href = "/calendar";
-          }
-        </script>
-      `); 
-    }
-    // Code for handling file upload and database query goes here
-    if (attachFileResponse == "성공") {
-      return res.redirect(newURL);
-    }
-    else res.send(attachFileResponse);
-  
+    const response = await calendarService.createFileMem(user_id, date, server_name, user_name, extension);
+    const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${date.slice(0, 4)}&selectedMonth=${date.slice(4, 6)}&selectedDate=${date.slice(6)}`;
+    return res.redirect(newURL);
+  } catch (err) {
+    console.error('S3 업로드 오류:', err);
+    return res.send(`<script>alert("업로드 중 오류 발생."); window.location.href = "/calendar";</script>`);
   }
-  else {
-    return res.redirect('/');
-  }
+  
 };
 
 exports.postMindDiary = async function (req, res) {
