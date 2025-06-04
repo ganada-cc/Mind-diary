@@ -57,96 +57,92 @@ exports.getCalendar = async function (req, res) {
   }
 }
 
-exports.postFile = async function (req, res) {
-  const token = req.cookies.x_auth;
-  if (!token) return res.redirect('/');
+// exports.postFile = async function (req, res) {
+//   const token = req.cookies.x_auth;
+//   if (!token) return res.redirect('/');
 
-  const decodedToken = jwt.verify(token, secret.jwtsecret);
-  const user_id = decodedToken.user_id;
-  const date = req.body.fileDate;
-  const file = req.file;
+//   const decodedToken = jwt.verify(token, secret.jwtsecret);
+//   const user_id = decodedToken.user_id;
+//   const date = req.body.fileDate;
+//   const file = req.file;
 
-  if (!file) {
-    return res.send(`<script>alert("파일이 없습니다."); window.location.href = "/minddiary";</script>`);
-  }
+//   if (!file) {
+//     return res.send(`<script>alert("파일이 없습니다."); window.location.href = "/minddiary";</script>`);
+//   }
 
-  const extension = path.extname(file.originalname).toLowerCase();
-  const allowedExt = ['.png', '.jpg', '.jpeg'];
-  if (!allowedExt.includes(extension)) {
-    return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/minddiary";</script>`);
-  }
+//   const extension = path.extname(file.originalname).toLowerCase();
+//   const allowedExt = ['.png', '.jpg', '.jpeg'];
+//   if (!allowedExt.includes(extension)) {
+//     return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/minddiary";</script>`);
+//   }
 
-  const server_name = uuidv4();
-  const user_name = path.basename(file.originalname, extension);
-  const fileKey = `images/${server_name}${extension}`;
+//   const server_name = uuidv4();
+//   const user_name = path.basename(file.originalname, extension);
+//   const fileKey = `images/${server_name}${extension}`;
 
-  const params = {
-    Bucket: process.env.AWS_S3_BUCKET_NAME,
-    Key: fileKey,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
+//   const params = {
+//     Bucket: process.env.AWS_S3_BUCKET_NAME,
+//     Key: fileKey,
+//     Body: file.buffer,
+//     ContentType: file.mimetype,
+//   };
 
-  try {
-    const uploadResult = await s3.upload(params).promise();
-    console.log("S3 업로드 성공:", uploadResult); 
+//   try {
+//     const uploadResult = await s3.upload(params).promise();
+//     console.log("S3 업로드 성공:", uploadResult); 
     
-    const response = await calendarService.createFileMem(user_id, date, server_name, user_name, extension);
-    const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${date.slice(0, 4)}&selectedMonth=${date.slice(4, 6)}&selectedDate=${date.slice(6)}`;
-    return res.redirect(newURL);
-  } catch (err) {
-    console.error('S3 업로드 오류:', err);
-    return res.send(`<script>alert("업로드 중 오류 발생."); window.location.href = "/minddiary";</script>`);
-  }
+//     const response = await calendarService.createFileMem(user_id, date, server_name, user_name, extension);
+//     const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${date.slice(0, 4)}&selectedMonth=${date.slice(4, 6)}&selectedDate=${date.slice(6)}`;
+//     return res.redirect(newURL);
+//   } catch (err) {
+//     console.error('S3 업로드 오류:', err);
+//     return res.send(`<script>alert("업로드 중 오류 발생."); window.location.href = "/minddiary";</script>`);
+//   }
   
-};
+// };
 
 exports.postMindDiary = async function (req, res) {
   const token = req.cookies.x_auth;
-  if (token) {
-      const decodedToken = jwt.verify(token, secret.jwtsecret); // 토큰 검증, 복호화
-      const user_id = decodedToken.user_id; // user_id를 추출
-      const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate; //쿼리스트링에서 날짜 추출
-      //const date = '2023-09-20'
-      console.log(req.query);
-      const {
-        keyword,
-        matter,
-        change,
-        solution,
-        compliment
-      } = req.body;
-      console.log(req.body)
-      const createMindDiaryResponse = await calendarService.createMindDiary(
-        user_id,
-        date,
-        keyword,
-        matter,
-        change,
-        solution,
-        compliment
-      );
-      if (createMindDiaryResponse == "성공") {
-        const queryString = querystring.stringify(req.query);
-        return res.status(200).send(`
-          <script>
-            if (confirm('마음 일기 등록에 성공했습니다.')) {
-              window.location.href = "/minddiary?${queryString}";
-            }
-          </script>
-        `);
-      } else {
-        const queryString = querystring.stringify(req.query);
-        return res.send(`
-          <script>
-            if (confirm('마음 일기 등록에 실패했습니다.')) {
-              window.location.href = "/minddiary?${queryString}";
-            }
-          </script>
-        `);
-      }
+  if (!token) return res.redirect('/');
+  const decodedToken = jwt.verify(token, secret.jwtsecret);
+  const user_id = decodedToken.user_id;
+  const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
+
+  const { keyword, matter, change, solution, compliment } = req.body;
+  const file = req.file;
+
+  if (file) {
+    const extension = path.extname(file.originalname).toLowerCase();
+    const allowedExt = ['.png', '.jpg', '.jpeg'];
+    if (!allowedExt.includes(extension)) {
+      return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/minddiary";</script>`);
+    }
+
+    const server_name = uuidv4();
+    const user_name = path.basename(file.originalname, extension);
+    const fileKey = `images/${server_name}${extension}`;
+
+    const params = {
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: fileKey,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+
+    try {
+      await s3.upload(params).promise();
+      console.log('S3 업로드 성공:\n', req.file);
+
+      await calendarService.createFileMem(user_id, date, server_name, user_name, extension);
+
+      console.log('✅ DB 저장 완!');
+    } catch (err) {
+      console.error('S3 업로드 오류:', err);
+      return res.send(`<script>alert("파일 업로드 실패"); window.location.href = "/minddiary";</script>`);
+    }
   }
-  else {
-    return res.redirect('/');
-  }
-}
+
+  await calendarService.createMindDiary(user_id, date, keyword, matter, change, solution, compliment);
+  const queryString = querystring.stringify(req.query);
+  return res.send(`<script>alert("마음일기 저장 완료"); window.location.href = "/minddiary?${queryString}";</script>`);
+};
