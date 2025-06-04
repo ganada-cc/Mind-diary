@@ -43,7 +43,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 //라우터 등록
-app.use('/calendar', calendarRouter);
+app.use('/minddiary', calendarRouter);
 app.use('/users', usersRouter);
   
 // root - 로그인

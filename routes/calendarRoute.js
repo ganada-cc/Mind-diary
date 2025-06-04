@@ -8,6 +8,6 @@ router.get('', calendarController.getCalendar);
 // calendar 추억보관함 파일 첨부
 router.post('/upload', upload.single('file'), calendarController.postFile);
 // calendar 마음일기
-router.post('/minddiary', calendarController.postMindDiary);
+router.post('/minddiary-post', calendarController.postMindDiary);
 
 module.exports = router;
