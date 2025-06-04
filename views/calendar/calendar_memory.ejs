@@ -82,7 +82,7 @@
       </div>
       
       <div class="wrapper ininin">
-        <form action="/calendar/upload" method="POST" enctype="multipart/form-data" id="fileForm">
+        <form action="/minddiary/upload" method="POST" enctype="multipart/form-data" id="fileForm">
           <div id="preview-container" style="text-align:center; margin-top: 10px;">
             <img id="preview-image" src="#" alt="pre-image" style="max-width: 300px; display: none;" />
           </div>
@@ -97,7 +97,7 @@
       <div class="mindInputArea col-lg-6 pt-lg-0 order-2 order-lg-1" >
       <div id = "userDiaryBox">
         <!-- <p class="diary_title">마음 일기</p> -->
-        <form id="diaryForm" action="/calendar/minddiary" method="POST">
+        <form id="diaryForm" action="/minddiary/minddiary-post" method="POST">
           <script>
             // 현재 URL에서 쿼리 문자열 가져오기
             const diaryQueryString = window.location.search;

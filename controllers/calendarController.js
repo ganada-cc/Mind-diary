@@ -67,13 +67,13 @@ exports.postFile = async function (req, res) {
   const file = req.file;
 
   if (!file) {
-    return res.send(`<script>alert("파일이 없습니다."); window.location.href = "/calendar";</script>`);
+    return res.send(`<script>alert("파일이 없습니다."); window.location.href = "/minddiary";</script>`);
   }
 
   const extension = path.extname(file.originalname).toLowerCase();
   const allowedExt = ['.png', '.jpg', '.jpeg'];
   if (!allowedExt.includes(extension)) {
-    return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/calendar";</script>`);
+    return res.send(`<script>alert("지원하지 않는 확장자입니다."); window.location.href = "/minddiary";</script>`);
   }
 
   const server_name = uuidv4();
@@ -96,7 +96,7 @@ exports.postFile = async function (req, res) {
     return res.redirect(newURL);
   } catch (err) {
     console.error('S3 업로드 오류:', err);
-    return res.send(`<script>alert("업로드 중 오류 발생."); window.location.href = "/calendar";</script>`);
+    return res.send(`<script>alert("업로드 중 오류 발생."); window.location.href = "/minddiary";</script>`);
   }
   
 };
@@ -131,7 +131,7 @@ exports.postMindDiary = async function (req, res) {
         return res.status(200).send(`
           <script>
             if (confirm('마음 일기 등록에 성공했습니다.')) {
-              window.location.href = "/calendar?${queryString}";
+              window.location.href = "/minddiary?${queryString}";
             }
           </script>
         `);
@@ -140,7 +140,7 @@ exports.postMindDiary = async function (req, res) {
         return res.send(`
           <script>
             if (confirm('마음 일기 등록에 실패했습니다.')) {
-              window.location.href = "/calendar?${queryString}";
+              window.location.href = "/minddiary?${queryString}";
             }
           </script>
         `);
