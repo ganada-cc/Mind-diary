@@ -4,7 +4,32 @@
   <link href="/css/calendar/calendar_check.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
-
+  <script>
+    // DOM 요소 가져오기
+    const otherLinks = document.getElementsByClassName("nav-link");
+    const mindLinks = document.getElementsByClassName("mindactive"); 
+  
+    // 마음일기 링크에 active 클래스 추가, 다른 링크에서 active 클래스 제거 
+    for (const link of otherLinks) {
+      link.classList.remove("active");
+    }
+  
+    for (const link of mindLinks) { 
+      link.classList.add("active");
+    }
+      // DOM 요소 가져오기
+    const otherMLinks = document.getElementsByClassName("nav-linkM");
+    const mindMLinks = document.getElementsByClassName("alarmactiveM"); 
+  
+    // 마음일기 링크에 active 클래스 추가, 다른 링크에서 active 클래스 제거 
+    for (const link of otherMLinks) {
+      link.classList.remove("activeM");
+    }
+  
+    for (const link of mindMLinks) { 
+      link.classList.add("activeM");
+    }
+  </script>
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex align-items-center">
 
