@@ -192,7 +192,6 @@ async function selectCalendar(pool, userId, date) {
           AND date = ?
       )
   `;
-
   const [userRow] = await pool.query(selectCalendarQuery, [userId, userId, date]);
   return userRow;
 }

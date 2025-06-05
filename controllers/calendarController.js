@@ -9,53 +9,57 @@ const s3 = require('../config/s3');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getCalendar = async function (req, res) {
-    const user_id = "test2";
-    // req.headers['x-user-id'];// user_id를 추출
-  
-    let date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
-    if (!req.query.selectedYear || !req.query.selectedMonth || !req.query.selectedDate) {
-      const today = new Date();
-      const selectedYear = String(today.getFullYear()).padStart(4, '0');
-      const selectedMonth = String(today.getMonth() + 1).padStart(2, '0');
-      const selectedDate = String(today.getDate()).padStart(2, '0');
-  
-      
-      const existingQueryString = req.query;
-      
-      if (Object.keys(existingQueryString).length === 0) {
-        const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}&selectedDate=${selectedDate}`;
-        return res.redirect(newURL);
-      }
+  const user_id = "test2"; // 임시 user_id
+
+  let date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
+  if (!req.query.selectedYear || !req.query.selectedMonth || !req.query.selectedDate) {
+    const today = new Date();
+    const selectedYear = String(today.getFullYear()).padStart(4, '0');
+    const selectedMonth = String(today.getMonth() + 1).padStart(2, '0');
+    const selectedDate = String(today.getDate()).padStart(2, '0');
+
+    const existingQueryString = req.query;
+    if (Object.keys(existingQueryString).length === 0) {
+      const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}&selectedDate=${selectedDate}`;
+      return res.redirect(newURL);
     }
-    // validation
-    if(!user_id) {
-      return res.send(baseResponse.USER_USERIDX_EMPTY);
-    } 
-    if (user_id <= 0) {
-      return res.send(baseResponse.USER_USERIDX_LENGTH);
-    }
-    const calendarResult = await calendarService.retrieveCalendar(user_id, date);
-    const calendarDataResult = await calendarService.retrieveSelectedCalendar(user_id, date);
-    const MindDiaryResult = await calendarService.retrieveCalendar(user_id, date);
-    const MindDiaryDataResult = await calendarService.retrieveSelectedMindDiary(user_id, date);
-    
-    return res.render('calendar/calendar.ejs', {
-      calendarResult,           
-      calendarDataResult,
-      MindDiaryResult,
-      MindDiaryDataResult,
-      image_url
-    });
+  }
+
+  // validation
+  if (!user_id) return res.send(baseResponse.USER_USERIDX_EMPTY);
+  if (user_id <= 0) return res.send(baseResponse.USER_USERIDX_LENGTH);
+
+  // 데이터 조회
+  const calendarResult = await calendarService.retrieveCalendar(user_id, date);
+  const calendarDataResult = await calendarService.retrieveSelectedCalendar(user_id, date);
+  const MindDiaryResult = await calendarService.retrieveCalendar(user_id, date);
+  const MindDiaryDataResult = await calendarService.retrieveSelectedMindDiary(user_id, date);
+
+  let image_url = '/img/nofound.png';
+  if (calendarResult.length > 0 && calendarResult[0].server_name && calendarResult[0].extension) {
+    image_url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/images/${calendarResult[0].server_name}${calendarResult[0].extension}`;
+  }
+
+  return res.render('calendar/calendar.ejs', {
+    calendarResult,           
+    calendarDataResult,
+    MindDiaryResult,
+    MindDiaryDataResult,
+    image_url
+  });
 };
 
 
 // 마음다이어리 저장
 exports.postMindDiary = async function (req, res) {
-const token = req.cookies.x_auth;
-if (!token) return res.redirect('/');
-const decodedToken = jwt.verify(token, secret.jwtsecret);
-const user_id = decodedToken.user_id;
-const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
+  const user_id = "test2";
+  const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
+
+// const token = req.cookies.x_auth;
+// if (!token) return res.redirect('/');
+// const decodedToken = jwt.verify(token, secret.jwtsecret);
+// const user_id = decodedToken.user_id;
+// const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
 
 const { keyword, matter, change, solution, compliment } = req.body;
 const file = req.file;
