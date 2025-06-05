@@ -28,8 +28,8 @@ const port = 3000,
     layouts = require("express-ejs-layouts"),
     calendarRouter = require('./routes/calendarRoute'),
     // usersRouter = require('./routes/usersRoute'),
-    sanitizeHtml = require('sanitize-html'),
-    puppeteer = require('puppeteer');
+    sanitizeHtml = require('sanitize-html');
+  //  puppeteer = require('puppeteer');
 
 // const cookieParser = require('cookie-parser');
 
