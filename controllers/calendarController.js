@@ -9,7 +9,8 @@ const s3 = require('../config/s3');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getCalendar = async function (req, res) {
-  const user_id = req.headers['x-user-id'];
+  // const user_id = req.headers['x-user-id'];
+  const user_id = "mj"
 
   let date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
   if (!req.query.selectedYear || !req.query.selectedMonth || !req.query.selectedDate) {
