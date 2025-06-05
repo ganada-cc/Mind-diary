@@ -70,4 +70,7 @@
   </div>
 </section><!-- End Hero -->
 
-<%- include('calendar_memory.ejs') %>
+<%- include('calendar_memory.ejs', { 
+  image_url: image_url, 
+  MindDiaryDataResult: MindDiaryDataResult 
+}) %>

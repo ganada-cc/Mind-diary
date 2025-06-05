@@ -181,20 +181,20 @@ async function insertCalInfo(pool, deleteCalendarParams, insertCalendarParams, g
 }
 // file_memories
 async function selectCalendar(pool, userId, date) {
-  const selectCalendarQuery =`
-  SELECT server_name, extension
-  FROM file_memories
-  WHERE user_id = '${userId}'
-    AND calendar_id = (
-      SELECT calendar_id
-      FROM calendar
-      WHERE user_id = '${userId}'
-        AND date = '${date}'
-    )
-`;
+  const selectCalendarQuery = `
+    SELECT server_name, extension
+    FROM file_memories
+    WHERE user_id = ?
+      AND calendar_id = (
+        SELECT calendar_id
+        FROM calendar
+        WHERE user_id = ?
+          AND date = ?
+      )
+  `;
 
-const [userRow] = await pool.query(selectCalendarQuery, [userId]);
-return userRow;
+  const [userRow] = await pool.query(selectCalendarQuery, [userId, userId, date]);
+  return userRow;
 }
 
 // 파일 업로드
@@ -277,23 +277,45 @@ async function getSelectedMindDiary(pool, selectedMindDiaryParams) {
 }
 
 async function insertMindDiaryInfo(pool, insertMindDiaryParams) {
-  // console.log(insertMindDiaryParams)
-  const deleteMindDiaryQuery = `
-      DELETE FROM mind_diary
-      WHERE user_id = '${insertMindDiaryParams[0]}' AND date = '${insertMindDiaryParams[1]}';
-        `
-  const insertMindDiaryQuery  = `
-        insert into mind_diary (\`user_id\`, \`date\`, \`keyword\`, \`matter\`, \`change\`, \`solution\`, \`compliment\`)
-        values (?,?,?,?,?,?,?);
-        `;
+  const user_id = insertMindDiaryParams[0];
+  const date = insertMindDiaryParams[1];
 
+  const checkCalendarQuery = `
+    SELECT calendar_id FROM calendar WHERE user_id = ? AND date = ?
+  `;
+  const insertCalendarQuery = `
+    INSERT INTO calendar (user_id, date) VALUES (?, ?)
+  `;
+  const deleteMindDiaryQuery = `
+    DELETE FROM mind_diary WHERE user_id = ? AND date = ?
+  `;
+  const insertMindDiaryQuery = `
+    INSERT INTO mind_diary (user_id, date, keyword, matter, \`change\`, solution, compliment)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const connection = await pool.getConnection();
   try {
-    await pool.query(deleteMindDiaryQuery);
-    await pool.query(insertMindDiaryQuery, insertMindDiaryParams);
+    await connection.beginTransaction();
+
+    const [calendarCheck] = await connection.query(checkCalendarQuery, [user_id, date]);
+    if (calendarCheck.length === 0) {
+      await connection.query(insertCalendarQuery, [user_id, date]);
+    }
+
+    await connection.query(deleteMindDiaryQuery, [user_id, date]);
+    await connection.query(insertMindDiaryQuery, insertMindDiaryParams);
+
+    await connection.commit();
   } catch (err) {
+    await connection.rollback();
+    console.error(err);
     throw err;
+  } finally {
+    connection.release();
   }
 }
+
 
 module.exports = {
   selectCalendar,
