@@ -9,8 +9,7 @@ const s3 = require('../config/s3');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getCalendar = async function (req, res) {
-  // const user_id = req.headers['x-user-id'];
-  const user_id = "mj"
+  const user_id = req.headers['x-user-id'];
 
   let date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
   if (!req.query.selectedYear || !req.query.selectedMonth || !req.query.selectedDate) {
@@ -21,8 +20,8 @@ exports.getCalendar = async function (req, res) {
 
     const existingQueryString = req.query;
     if (Object.keys(existingQueryString).length === 0) {
-      const newURL = `${req.protocol}://${req.get('host')}${req.baseUrl}?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}&selectedDate=${selectedDate}`;
-      return res.redirect(newURL);
+      const newQuery = `?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}&selectedDate=${selectedDate}`;
+      return res.redirect(`${req.baseUrl}${newQuery}`);
     }
   }
 
@@ -94,5 +93,5 @@ if (file) {
 }
 
 const queryString = querystring.stringify(req.query);
-return res.send(`<script>alert("마음일기 저장 완료"); window.location.href = "/minddiary?${queryString}";</script>`);
+return res.send(`<script>alert("마음일기 저장 완료"); window.location.href = "${req.baseUrl}?${queryString}";</script>`);
 };
