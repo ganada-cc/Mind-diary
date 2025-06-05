@@ -9,7 +9,7 @@ const s3 = require('../config/s3');
 const { v4: uuidv4 } = require('uuid');
 
 exports.getCalendar = async function (req, res) {
-  const user_id = "test2"; // 임시 user_id
+  const user_id = req.headers['x-user-id'];
 
   let date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
   if (!req.query.selectedYear || !req.query.selectedMonth || !req.query.selectedDate) {
@@ -52,14 +52,8 @@ exports.getCalendar = async function (req, res) {
 
 // 마음다이어리 저장
 exports.postMindDiary = async function (req, res) {
-  const user_id = "test2";
+  const user_id = req.headers['x-user-id'];
   const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
-
-// const token = req.cookies.x_auth;
-// if (!token) return res.redirect('/');
-// const decodedToken = jwt.verify(token, secret.jwtsecret);
-// const user_id = decodedToken.user_id;
-// const date = req.query.selectedYear + req.query.selectedMonth + req.query.selectedDate;
 
 const { keyword, matter, change, solution, compliment } = req.body;
 const file = req.file;
