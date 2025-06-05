@@ -1,0 +1,71 @@
+name: Deploy to GKE using Docker Hub
+
+on:
+  push:
+    branches: main 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE: mjkang4416/mind-diary
+      PROJECT_ID: ganada-cc
+      CLUSTER_NAME: cc-cluster
+      CLUSTER_ZONE: asia-northeast3-a
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker images with tags
+        run: |
+          docker build -t $IMAGE:${{ github.sha }} -t $IMAGE:latest .
+
+      - name: Push both tags to Docker Hub
+        run: |
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+
+      - name: Get GKE credentials
+        run: gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
+
+      - name: Create Kubernetes secret
+        run: |
+          kubectl create secret generic minddiary-secret \
+            --from-literal=DB_HOST=*** \
+            --from-literal=DB_USER=*** \
+            --from-literal=DB_PW=*** \
+            --from-literal=DB_PORT=*** \
+            --from-literal=DB_NAME=*** \
+            --dry-run=client -o yaml | kubectl apply -f -
+      
+
+      - name: Replace image tag in community.yml
+        run: |
+          sed -i "s|image: mjkang4416/mind-diary:.*|image: mjkang4416/mind-diary:${{ github.sha }}|" cheer-minddiary.yml
+
+      - name: Apply Kubernetes Manifests
+        run: |
+          kubectl apply -f cheer-minddiary.yml
+
+      - name: Wait for rollout to complete
+        run: |
+          kubectl rollout status Deployment/minddiary
