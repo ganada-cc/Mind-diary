@@ -41,7 +41,7 @@ kind: Service
 metadata:
   name: minddiary
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: minddiary
   ports:
