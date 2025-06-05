@@ -12,7 +12,6 @@
   "dependencies": {
     "aws-sdk": "^2.1692.0",
     "axios": "^1.4.0",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "date-fns": "^2.30.0",
@@ -29,7 +28,6 @@
     "node-schedule": "^2.1.1",
     "openai": "^3.3.0",
     "pandas": "^0.0.3",
-    "puppeteer": "^21.3.5",
     "sanitize-html": "^2.11.0",
     "uuid": "^11.1.0"
   }

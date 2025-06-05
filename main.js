@@ -27,11 +27,11 @@ const port = 3000,
     fs = require("fs"),
     layouts = require("express-ejs-layouts"),
     calendarRouter = require('./routes/calendarRoute'),
-    usersRouter = require('./routes/usersRoute'),
+    // usersRouter = require('./routes/usersRoute'),
     sanitizeHtml = require('sanitize-html'),
     puppeteer = require('puppeteer');
 
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 
 app.set("view engine", "ejs");
 
@@ -40,17 +40,17 @@ app.use('/uploads',express.static("uploads/"));
 app.use(layouts);
 app.use(express.urlencoded());
 app.use(express.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 //라우터 등록
 app.use('/minddiary', calendarRouter);
-app.use('/users', usersRouter);
+// app.use('/users', usersRouter);
   
 // root - 로그인
-app.get(
-    "/", (req,res) =>
-    {res.render("users/login");}
-);
+// app.get(
+//     "/", (req,res) =>
+//     {res.render("users/login");}
+// );
 
 app.listen(port,() => {
   const dir = "./uploads";
