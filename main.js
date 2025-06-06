@@ -46,22 +46,15 @@ app.use(express.json());
 app.use('/minddiary', calendarRouter);
 
 // server.js
-const express = require('express');
-const app = express();
-
 app.get('/healthz', (req, res) => {
   res.status(200).send('I am healthy!');
 });
 
-app.listen(3000, () => {
-  console.log('App running on port 3000');
-});
 
-app.listen(port,() => {
+app.listen(port, () => {
   const dir = "./uploads";
   if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
   }
-  console.log("서버 실행 중");
-  }
-);
+  console.log(`App running on port ${port}`);
+});
