@@ -44,13 +44,18 @@ app.use(express.json());
 
 //라우터 등록
 app.use('/minddiary', calendarRouter);
-// app.use('/users', usersRouter);
-  
-// root - 로그인
-// app.get(
-//     "/", (req,res) =>
-//     {res.render("users/login");}
-// );
+
+// server.js
+const express = require('express');
+const app = express();
+
+app.get('/healthz', (req, res) => {
+  res.status(200).send('I am healthy!');
+});
+
+app.listen(3000, () => {
+  console.log('App running on port 3000');
+});
 
 app.listen(port,() => {
   const dir = "./uploads";
