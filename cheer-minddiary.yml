@@ -50,7 +50,7 @@ kind: Service
 metadata:
   name: minddiary
 spec:
-  type: ClusterIp
+  type: ClusterIP
   selector:
     app: minddiary
   ports:
