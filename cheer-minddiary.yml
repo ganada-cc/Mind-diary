@@ -6,20 +6,6 @@ metadata:
     app: minddiary
 data:
   PORT: "3000"
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minddiary-secret
-  labels:
-    app: minddiary
-type: Opaque
-data:
-  AWS_ACCESS_KEY_ID: QUtJQTJQMzRKQlJONUFVSFhDVUs=
-  AWS_SECRET_ACCESS_KEY: aHFlcjQ2NW1vcE1LNWlUUWtjNTh3d2trMXFpeXlKakxKNnc3SHI1Vg==
-  AWS_REGION: YXAtbm9ydGhlYXN0LTI=
-  AWS_S3_BUCKET_NAME: bWluZGRpYXJ5aW1hZ2VidWNrZXQ=
 ---
 apiVersion: apps/v1
 kind: Deployment
