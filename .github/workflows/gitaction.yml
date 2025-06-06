@@ -50,11 +50,11 @@ jobs:
       - name: Create Kubernetes secret
         run: |
           kubectl create secret generic minddiary-secret \
-            --from-literal=DB_HOST=*** \
-            --from-literal=DB_USER=*** \
-            --from-literal=DB_PW=*** \
-            --from-literal=DB_PORT=*** \
-            --from-literal=DB_NAME=*** \
+            --from-literal=DB_HOST="${{ secrets.DB_HOST }}" \
+            --from-literal=DB_USER="${{ secrets.DB_USER }}" \
+            --from-literal=DB_PW="${{ secrets.DB_PW }}" \
+            --from-literal=DB_PORT="${{ secrets.DB_PORT }}" \
+            --from-literal=DB_NAME="${{ secrets.DB_NAME }}" \
             --dry-run=client -o yaml | kubectl apply -f -
       
 
