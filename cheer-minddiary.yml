@@ -20,12 +20,6 @@ data:
   AWS_SECRET_ACCESS_KEY: aHFlcjQ2NW1vcE1LNWlUUWtjNTh3d2trMXFpeXlKakxKNnc3SHI1Vg==
   AWS_REGION: YXAtbm9ydGhlYXN0LTI=
   AWS_S3_BUCKET_NAME: bWluZGRpYXJ5aW1hZ2VidWNrZXQ=
-  DB_HOST: Y2MtZGIuYzMyc2Vnd3l3bXVlLmFwLW5vcnRoZWFzdC0yLnJkcy5hbWF6b25hd3MuY29t
-  DB_USER: YWRtaW4=
-  DB_PW: YWRtaW4xMjM0NQ==
-  DB_PORT: MzMwNg==
-  DB_NAME: Y2NfZGI=
-
 ---
 apiVersion: apps/v1
 kind: Deployment
