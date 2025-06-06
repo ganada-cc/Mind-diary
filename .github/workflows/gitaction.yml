@@ -55,6 +55,10 @@ jobs:
             --from-literal=DB_PW="${{ secrets.DB_PW }}" \
             --from-literal=DB_PORT="${{ secrets.DB_PORT }}" \
             --from-literal=DB_NAME="${{ secrets.DB_NAME }}" \
+            --from-literal=AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --from-literal=AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --from-literal=AWS_REGION="${{ secrets.AWS_REGION }}" \
+            --from-literal=AWS_S3_BUCKET_NAME="${{ secrets.AWS_S3_BUCKET_NAME }}" \
             --dry-run=client -o yaml | kubectl apply -f -
       
 
