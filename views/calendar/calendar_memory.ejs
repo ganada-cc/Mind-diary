@@ -35,7 +35,7 @@
     
         <table id="userDiaryForm">
           <% if (MindDiaryDataResult?.MindDiary_list) { %>
-            <tr><td> 오늘의 핵심 키워드? </td></tr>
+            <tr><td> 오늘의 핵심 키워드는 무엇인가요? </td></tr>
             <td><textarea name="keyword"><%= MindDiaryDataResult.MindDiary_list.keyword %></textarea></td>
             <tr><td> 오늘은 무슨 일이 일어났나요? </td></tr>
             <td><textarea name="matter"><%= MindDiaryDataResult.MindDiary_list.matter %></textarea></td>
